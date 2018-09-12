@@ -1,7 +1,7 @@
 FROM hub.styd.cn/node:base
 
-WORKDIR /data
-COPY . /data
+WORKDIR /app
+COPY . /app
 
 RUN cnpm install
 
