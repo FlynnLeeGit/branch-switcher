@@ -6,3 +6,4 @@ COPY . /data
 RUN cnpm install
 
 CMD ["npm","start"]
+
