@@ -2,6 +2,7 @@ const express = require('express')
 const cookieParser = require('cookie-parser')
 const app = express()
 const path = require('path')
+const logger = require('morgan')
 const fs = require('fs')
 const PORT = 3000
 
@@ -10,8 +11,9 @@ app
   .set('view engine', 'ejs')
   .use(express.static('static'))
   .use(cookieParser())
+  .use(logger('dev'))
 
-app.get('/:app_name', (req, res) => {
+app.get('/app/:app_name', (req, res) => {
   const appsConfig = JSON.parse(
     fs.readFileSync(__dirname + '/conf/apps.json', 'utf-8')
   )
@@ -30,6 +32,7 @@ app.get('/:app_name', (req, res) => {
     data.msg = `未找到匹配的应用： [ ${
       data.app_name
     } ]，请检查配置 conf/apps.json`
+    console.log(data)
     res.render('index', data)
     return
   }
@@ -44,11 +47,13 @@ app.get('/:app_name', (req, res) => {
   if (!fs.existsSync(data.webroot)) {
     data.code = 40002
     data.msg = `应用目录不存在 ${data.webroot}，请检查应用是否已构建`
+    console.log(data)
     res.render('index', data)
     return
   }
 
   data.msg = `应用目录有效 ${data.webroot}`
+  console.log(data)
   res.render('index', data)
 })
 
