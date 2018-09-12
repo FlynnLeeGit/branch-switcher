@@ -38,7 +38,7 @@ app.get('/:app_name', (req, res) => {
   data.webroot = appConfig.webroot
   data.branch = req.cookies[data.branch_key]
   if (data.branch) {
-    data.webroot = `${data.webroot}/${data.branch}`
+    data.webroot = `${data.webroot}_branches/${data.branch}`
   }
 
   if (!fs.existsSync(data.webroot)) {
