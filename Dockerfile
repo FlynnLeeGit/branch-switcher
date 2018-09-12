@@ -3,6 +3,6 @@ FROM hub.styd.cn/node:base
 WORKDIR /data
 COPY . /data
 
-RUN cnpm instal
+RUN cnpm install
 
 CMD ["npm","start"]
