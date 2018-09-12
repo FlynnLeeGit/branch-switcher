@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "dev": "nodemon app.js -w app.js",
+    "start": "node app.js"
+  },
+  "devDependencies": {
+    "cookie-parser": "^1.4.3",
+    "nodemon": "^1.18.4"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "ejs": "^2.6.1"
+  }
+}

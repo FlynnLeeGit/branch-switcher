@@ -1,0 +1,6 @@
+{
+  "demo": {
+    "branch_key": "demo_branch",
+    "webroot": "/data/htdocs"
+  }
+}

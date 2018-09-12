@@ -1,0 +1,4 @@
+ci:
+  script:
+    - make build-image
+    - make push-image
