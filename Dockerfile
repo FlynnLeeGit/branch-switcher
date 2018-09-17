@@ -1,4 +1,4 @@
-FROM hub.styd.cn/node:base
+FROM hub.styd.cn/node:sr-8.12.0
 
 WORKDIR /app
 COPY . /app
@@ -6,4 +6,3 @@ COPY . /app
 RUN cnpm install
 
 CMD ["npm","start"]
-
