@@ -1,6 +1,7 @@
 {
   "demo": {
     "branch_key": "demo_branch",
-    "webroot": "/data/htdocs/oa_frontend"
+    "webroot": "/data/htdocs/oa_frontend",
+    "webroot_branches": "/data/htdocs/oa_frontend_branches"
   }
 }
