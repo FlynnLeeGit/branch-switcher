@@ -44,7 +44,7 @@
                             {{msg}}
                         </div>
                         <div v-if='is_ok' class='subtitle'>
-                            有效范围： <a :href="scope">{{scope}}</a>
+                            项目站点： <a :href="scope">{{scope}}</a>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                     <div class="control">
                         <div class="select">
                             <select placeholder='请选择分支' v-model='branch'>
-                                <option value=''>[最新]</option>
+                                <option value=''>[默认]</option>
                                 <option v-for='b in branches' :key='b'>{{b}}</option>
                             </select>
                         </div>
@@ -93,7 +93,7 @@
                 msg: msg,
                 is_ok: is_ok,
                 branch: branch,
-                current_branch: branch || '最新',
+                current_branch: branch || '默认',
                 scope: location.origin
             },
             computed: {

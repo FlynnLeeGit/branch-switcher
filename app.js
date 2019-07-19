@@ -4,7 +4,7 @@ const app = express()
 const path = require('path')
 const logger = require('morgan')
 const fs = require('fs')
-const PORT = 3000
+const PORT = 3030
 
 app
   .set('views', path.join(__dirname, 'views'))
@@ -123,5 +123,5 @@ app.get('/app/:app_name', (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`server started on ${PORT}`)
+  console.log(`server started on http://localhost:${PORT}`)
 })
