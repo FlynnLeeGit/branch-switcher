@@ -4,7 +4,7 @@ const app = express()
 const path = require('path')
 const logger = require('morgan')
 const fs = require('fs')
-const PORT = 3030
+const PORT = 3000
 
 app
   .set('views', path.join(__dirname, 'views'))
