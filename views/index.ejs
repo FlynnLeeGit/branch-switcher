@@ -1,122 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Branch Switcher</title>
     <style>
-        [v-cloak] {
-            display: none;
-        }
+      [v-cloak] {
+        display: none;
+      }
     </style>
-    <link href="https://static-s.styd.cn/201810181619/bulma.min.css" rel="stylesheet">
-</head>
+    <link
+      href="https://static-s.styd.cn/201810181619/bulma.min.css"
+      rel="stylesheet"
+    />
+  </head>
 
-<body>
-    <div id='app' v-cloak>
-        <nav id="navbar" class="navbar has-shadow is-spaced">
+  <body>
+    <div id="app" v-cloak>
+      <nav id="navbar" class="navbar has-shadow is-spaced">
+        <div class="container">
+          <div class="navbar-brand">
+            <a class="navbar-item">
+              <img src="https://static-s.styd.cn/201810181618/bulma-logo.png" />
+            </a>
+            <a class="navbar-item">
+              <h1>Branch Switcher</h1>
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      <main>
+        <section class="hero" :class="[is_ok?'is-primary':'is-danger']">
+          <div class="hero-body">
             <div class="container">
-                <div class="navbar-brand">
-                    <a class="navbar-item">
-                        <img src="https://static-s.styd.cn/201810181618/bulma-logo.png">
-                    </a>
-                    <a class="navbar-item">
-                        <h1>Branch Switcher</h1>
-                    </a>
+              <h1 class="title">
+                <div>
+                  应用：[ {{ app_name }} ]
+                  <span v-if="is_show_branch"
+                    >分支策略：[{{ current_branch }}]
+                  </span>
                 </div>
+              </h1>
+
+              <div class="subtitle">
+                {{ msg }}
+              </div>
+              <div v-if="is_ok" class="subtitle">
+                项目站点： <a :href="scope">{{ scope }}</a>
+              </div>
             </div>
-        </nav>
-
-        <main>
-            <section class="hero" :class="[is_ok?'is-primary':'is-danger']">
-                <div class="hero-body">
-                    <div class="container">
-                        <h1 class="title">
-                            <div>
-                                应用：[ {{app_name}} ] <span v-if='is_show_branch'>分支策略：[{{current_branch}}] </span>
-
-                            </div>
-                        </h1>
-
-                        <div class="subtitle">
-                            {{msg}}
-                        </div>
-                        <div v-if='is_ok' class='subtitle'>
-                            项目站点： <a :href="scope">{{scope}}</a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <div class="section container" v-if='is_show_form'>
-                <div class="field">
-                    <label class="label">切换分支：</label>
-                    <div class="control">
-                        <div class="select">
-                            <select placeholder='请选择分支' v-model='branch'>
-                                <option value=''>[默认]</option>
-                                <option v-for='b in branches' :key='b'>{{b}}</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="field is-grouped">
-                    <div class="control">
-                        <button @click='onSubmit' class="button is-primary">确认切换</button>
-                    </div>
-                </div>
+          </div>
+        </section>
+        <div class="section container" v-if="is_show_form">
+          <div class="field">
+            <label class="label">切换分支：</label>
+            <div class="control">
+              <div class="select">
+                <select placeholder="请选择分支" v-model="branch">
+                  <option value="">[最新构建]</option>
+                  <option v-for="b in branches" :key="b" :value="b">{{
+                    b
+                  }}</option>
+                </select>
+              </div>
             </div>
-        </main>
+          </div>
+          <div class="field is-grouped">
+            <div class="control">
+              <button @click="onSubmit" class="button is-primary">
+                确认切换
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
     <script src="https://static-s.styd.cn/201810181618/vue.min-2.5.16.js"></script>
     <script src="https://static-s.styd.cn/201810181618/js.cookie.min.js"></script>
     <script>
-        var branch_key = '<%= branch_key %>'
-        var webroot = '<%= webroot %>'
-        var code = <%= code %>
-        var app_name = '<%= app_name %>'
-        var msg = '<%= msg %>'
-        var branch = '<%= branch %>'
-        var is_ok = code === 200
-        var branches = '<%= branches %>'.split(',').filter(function (item) {
-            return !!item
-        })
-        new Vue({
-            el: '#app',
-            data: {
-                branches: branches,
-                app_name: app_name,
-                webroot: webroot,
-                code: code,
-                msg: msg,
-                is_ok: is_ok,
-                branch: branch,
-                current_branch: branch || '默认',
-                scope: location.origin
-            },
-            computed: {
-                is_show_branch() {
-                    return code !== 40001
-                },
-                is_show_form() {
-                    return code === 200
-                }
-            },
-            methods: {
-                onSubmit() {
-                    if(!this.branch){
-                        Cookies.remove(branch_key)
-                        location.reload()
-                        return
-                    }
-                    Cookies.set(branch_key, this.branch)
-                    location.reload()
-                }
-            }
-        })
+      var branch_key = '<%= branch_key %>'
+      var webroot = '<%= webroot %>'
+      var code = <%= code %>
+      var app_name = '<%= app_name %>'
+      var msg = '<%= msg %>'
+      var branch = '<%= branch %>'
+      var is_ok = code === 200
+      var branches = '<%= branches %>'.split(',').filter(function (item) {
+          return !!item
+      })
+      new Vue({
+          el: '#app',
+          data: {
+              branches: branches,
+              app_name: app_name,
+              webroot: webroot,
+              code: code,
+              msg: msg,
+              is_ok: is_ok,
+              branch: branch,
+              current_branch: branch || '最新构建',
+              scope: location.origin
+          },
+          computed: {
+              is_show_branch() {
+                  return code !== 40001
+              },
+              is_show_form() {
+                  return code === 200
+              }
+          },
+          methods: {
+              onSubmit() {
+                  if(!this.branch){
+                      Cookies.remove(branch_key)
+                  }else {
+                      Cookies.set(branch_key, this.branch)
+                  }
+                  location.href = this.scope
+              }
+          }
+      })
     </script>
-</body>
-
+  </body>
 </html>
