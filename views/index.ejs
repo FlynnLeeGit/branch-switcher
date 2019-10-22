@@ -124,8 +124,15 @@
                     body:JSON.stringify({
                       branch:this.branch
                     })
-                  }).catch(e=>{
-                    console.log(e)
+                  })
+                  .then(res=>res.json())
+                  .then(json=> {
+                    if(json.code!==200){
+                      alert(json.msg)
+                      return
+                    }
+                    location.reload()
+                    
                   })
                 }
               },
