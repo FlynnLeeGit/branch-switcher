@@ -143,6 +143,7 @@ app.post('/app/:app_name/gitlab', loadConf, (req, res) => {
   }
 
   try {
+    fse.emptyDirSync(branchDir)
     fse.removeSync(branchDir)
     res.status(200).json({
       code: 200,
@@ -173,6 +174,7 @@ app.delete('/app/:app_name/delete', loadConf, (req, res) => {
     return
   }
   try {
+    fse.emptyDirSync(branchDir)
     fse.removeSync(branchDir)
     res.status(200).json({
       code: 200,
