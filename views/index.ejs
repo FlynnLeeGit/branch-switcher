@@ -39,7 +39,7 @@
                 <div>
                   应用：[ {{ app_name }} ]
                   <span v-if="is_show_branch"
-                    >分支策略：[{{ current_branch }}]
+                    >分支策略：[{{ branch_text }}]
                   </span>
                 </div>
               </h1>
@@ -72,6 +72,7 @@
               <button @click="onSubmit" class="button is-primary">
                 确认切换
               </button>
+              <button v-if='branch' @click="onDelete" class="button is-danger">删除</button>
             </div>
           </div>
         </div>
@@ -101,7 +102,7 @@
               msg: msg,
               is_ok: is_ok,
               branch: branch,
-              current_branch: branch || '最新构建',
+              branch_text: branch || '最新构建',
               scope: location.origin
           },
           computed: {
@@ -113,6 +114,21 @@
               }
           },
           methods: {
+              onDelete(){
+                if(window.confirm(`是否确认删除分支目录${this.branch}?`)){
+                  window.fetch(location.pathname+'/delete',{
+                    method:'DELETE',
+                    headers:{
+                      'Content-Type':'application/json',
+                    },
+                    body:JSON.stringify({
+                      branch:this.branch
+                    })
+                  }).catch(e=>{
+                    console.log(e)
+                  })
+                }
+              },
               onSubmit() {
                   if(!this.branch){
                       Cookies.remove(branch_key)
