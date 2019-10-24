@@ -109,7 +109,7 @@ app.get('/app/:app_name', loadConf, (req, res) => {
       return fse.existsSync(b.path)
     })
     .map(b => {
-      b.stats = fse.statSync(path.join(webroot_branches, b))
+      b.stats = fse.statSync(b.path)
       return b
     })
     .sort((b1, b2) => b2.stats.mtimeMs - b1.stats.mtimeMs)
