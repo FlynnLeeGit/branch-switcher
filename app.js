@@ -97,10 +97,19 @@ app.get('/app/:app_name', loadConf, (req, res) => {
     return
   }
 
-  const branches = fse.readdirSync(webroot_branches).join(',')
+  const branches = fse
+    .readdirSync(webroot_branches)
+    .map(b => {
+      return {
+        name: b,
+        stats: fse.statSync(path.join(webroot_branches, b))
+      }
+    })
+    .sort((b1, b2) => b2.stats.mtimeMs - b1.stats.mtimeMs)
+
   res.render('index', {
     code: 200,
-    msg: `应用目录有效 ${webroot}`,
+    msg: `应用目录有效 ${webroot_folder}`,
     webroot: webroot_folder,
     app_name,
     branches,

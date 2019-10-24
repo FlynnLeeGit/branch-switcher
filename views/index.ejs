@@ -60,9 +60,8 @@
               <div class="select">
                 <select placeholder="请选择分支" v-model="branch">
                   <option value="">[最新构建]</option>
-                  <option v-for="b in branches" :key="b" :value="b">{{
-                    b
-                  }}</option>
+                  <option v-for="b in branches" :key="b.name" :value="b.name">
+                  {{ b.name }} -- {{b.stats.mtime | dateFilter }} 更新</option>
                 </select>
               </div>
             </div>
@@ -72,7 +71,7 @@
               <button @click="onSubmit" class="button is-primary">
                 确认切换
               </button>
-              <button v-if='branch' @click="onDelete" class="button is-danger">删除</button>
+              <button style='margin-left:16px' v-if='branch' @click="onDelete" class="button is-danger">删除</button>
             </div>
           </div>
         </div>
@@ -89,11 +88,15 @@
       var msg = '<%= msg %>'
       var branch = '<%= branch %>'
       var is_ok = code === 200
-      var branches = '<%= branches %>'.split(',').filter(function (item) {
-          return !!item
-      })
+      var branches = <%- JSON.stringify(branches)%>;
       new Vue({
           el: '#app',
+          filters:{
+            dateFilter(key){
+              const d = new Date(key)
+              return (d.getMonth()+1) +'/'+(d.getDate())
+            }
+          },
           data: {
               branches: branches,
               app_name: app_name,
