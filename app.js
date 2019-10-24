@@ -99,11 +99,18 @@ app.get('/app/:app_name', loadConf, (req, res) => {
 
   const branches = fse
     .readdirSync(webroot_branches)
-    .map(b => {
+    .map(name => {
       return {
-        name: b,
-        stats: fse.statSync(path.join(webroot_branches, b))
+        name,
+        path: path.join(webroot_branches, name)
       }
+    })
+    .filter(b => {
+      return fse.existsSync(b.path)
+    })
+    .map(b => {
+      b.stats = fse.statSync(path.join(webroot_branches, b))
+      return b
     })
     .sort((b1, b2) => b2.stats.mtimeMs - b1.stats.mtimeMs)
 
