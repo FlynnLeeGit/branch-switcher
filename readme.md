@@ -27,3 +27,8 @@ apps.json 为配置文件
   }
 }
 ```
+
+### 使用
+
+* nginx配置 参考./nginx.conf
+* 和gitlab分支删除对应 `/app/:app_name/gitlab`
