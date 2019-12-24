@@ -39,7 +39,7 @@
                 <div>
                   应用：[ {{ app_name }} ]
                   <span v-if="is_show_branch"
-                    >分支策略：[{{ branch_text }}]
+                    >当前分支：[{{ branch_text }}]
                   </span>
                 </div>
               </h1>
@@ -59,7 +59,7 @@
             <div class="control">
               <div class="select">
                 <select placeholder="请选择分支" v-model="branch">
-                  <option value="">[最新构建]</option>
+                  <option value="">[默认分支 {{default_branch}}]</option>
                   <option v-for="b in branches" :key="b.name" :value="b.name">
                   {{ b.name }} -- {{b.stats.mtime | dateFilter }} 更新</option>
                 </select>
@@ -82,13 +82,13 @@
     <script src="https://static-s.styd.cn/201810181618/js.cookie.min.js"></script>
     <script>
       var branch_key = '<%= branch_key %>'
-      var webroot = '<%= webroot %>'
       var code = <%= code %>
       var app_name = '<%= app_name %>'
       var msg = '<%= msg %>'
       var branch = '<%= branch %>'
       var is_ok = code === 200
       var branches = <%- JSON.stringify(branches)%>;
+      var default_branch = '<%= default_branch %>'
       new Vue({
           el: '#app',
           filters:{
@@ -100,7 +100,6 @@
           data: {
               branches: branches,
               app_name: app_name,
-              webroot: webroot,
               code: code,
               msg: msg,
               is_ok: is_ok,
@@ -114,6 +113,15 @@
               },
               is_show_form() {
                   return code === 200
+              },
+              cookieDomain(){
+                const currentHostname = location.hostname
+                if( currentHostname.indexOf('.')  === -1  ) {
+                  return currentHostname
+                } else {
+                  // 只使用一级域名domain
+                  return '.' + currentHostname.split('.').slice(-2).join('.')
+                }
               }
           },
           methods: {
@@ -135,15 +143,17 @@
                       return
                     }
                     location.reload()
-                    
                   })
                 }
               },
               onSubmit() {
+                console.log(this.branch,branch_key,this.cookieDomain)
                   if(!this.branch){
                       Cookies.remove(branch_key)
                   }else {
-                      Cookies.set(branch_key, this.branch)
+                      Cookies.set(branch_key, this.branch,{
+                        domain: this.cookieDomain
+                      })
                   }
                   location.href = this.scope
               }
