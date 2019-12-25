@@ -17,10 +17,10 @@ app
   .use(bodyParser.json())
   .use(logger("dev"));
 
-app.get("/app/:app_name/default_branch/:default_branch", loadConf, (req, res) => {
+app.get("/app/:app_name", loadConf, (req, res) => {
   const app_name = req.app.get("app_name");
   const app_config = req.app.get("app_config");
-  const default_branch = req.app.get('default_branch')
+  const default_branch = req.query.default_branch || 'master'
 
   const webroot_branches = app_config.webroot_branches;
 

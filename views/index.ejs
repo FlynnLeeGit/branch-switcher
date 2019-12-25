@@ -146,10 +146,11 @@
                 }
               },
               onSubmit() {
-                console.log(this.branch,branch_key,this.cookieDomain)
                   if(!this.branch){
-                      Cookies.remove(branch_key)
-                  }else {
+                      Cookies.remove(branch_key,{
+                        domain:this.cookieDomain
+                      })
+                  } else {
                       Cookies.set(branch_key, this.branch,{
                         domain: this.cookieDomain
                       })
