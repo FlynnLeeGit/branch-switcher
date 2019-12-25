@@ -17,14 +17,15 @@ app
   .use(bodyParser.json())
   .use(logger("dev"));
 
-app.get("/app/:app_name", loadConf, (req, res) => {
+app.get("/app/:app_name/default_branch/:default_branch", loadConf, (req, res) => {
   const app_name = req.app.get("app_name");
   const app_config = req.app.get("app_config");
+  const default_branch = req.app.get('default_branch')
 
   const webroot_branches = app_config.webroot_branches;
 
   const host = req.headers["x-forwarded-host"] || req.hostnmae;
-  const branch_key = host + ".branch";
+  const branch_key = host + ".branch"
 
   if (!webroot_branches) {
     res.render("index", {
@@ -38,7 +39,7 @@ app.get("/app/:app_name", loadConf, (req, res) => {
     return;
   }
 
-  const branch = req.cookies[branch_key];
+  const branch = req.cookies[branch_key] || default_branch
 
   if (!fse.existsSync(webroot_branches)) {
     res.render("index", {
@@ -54,7 +55,7 @@ app.get("/app/:app_name", loadConf, (req, res) => {
 
   const webroot_folder = `${webroot_branches}/${branch}`;
 
-  if (!fse.existsSync(webroot_folder)) {
+  if (branch && !fse.existsSync(webroot_folder)) {
     res.render("index", {
       code: errors.WEBROOT_DIR_NOT_FOUND,
       msg: `应用目录不存在 ${webroot_folder}，请检查应用目录是否正确`,
@@ -93,6 +94,7 @@ app.get("/app/:app_name", loadConf, (req, res) => {
     branch,
     branch_key
   });
+  return
 });
 
 app.post("/app/:app_name/gitlab", loadConf, (req, res) => {
