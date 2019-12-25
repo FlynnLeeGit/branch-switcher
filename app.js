@@ -23,7 +23,7 @@ app.get("/app/:app_name", loadConf, (req, res) => {
 
   const webroot_branches = app_config.webroot_branches;
 
-  const host = req.headers['X-Forwarded-Host'] || req.host
+  const host = req.headers["x-forwarded-host"] || req.hostnmae;
   const branch_key = host + ".branch";
 
   if (!webroot_branches) {
