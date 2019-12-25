@@ -1,6 +1,5 @@
 {
   "demo": {
-    "default_branch": "test",
     "webroot_branches": "/data/htdocs/oa_frontend_branches"
   }
 }
