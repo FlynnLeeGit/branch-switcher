@@ -59,7 +59,7 @@
             <div class="control">
               <div class="select">
                 <select placeholder="请选择分支" v-model="branch">
-                  <option value="">[默认分支 {{default_branch}}]</option>
+                  <option value="">[默认分支]</option>
                   <option v-for="b in branches" :key="b.name" :value="b.name">
                   {{ b.name }} -- {{b.stats.mtime | dateFilter }} 更新</option>
                 </select>
@@ -88,7 +88,6 @@
       var branch = '<%= branch %>'
       var is_ok = code === 200
       var branches = <%- JSON.stringify(branches)%>;
-      var default_branch = '<%= default_branch %>'
       new Vue({
           el: '#app',
           filters:{

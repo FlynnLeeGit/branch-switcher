@@ -21,7 +21,6 @@ app.get("/app/:app_name", loadConf, (req, res) => {
   const app_name = req.app.get("app_name");
   const app_config = req.app.get("app_config");
 
-  const default_branch = app_config.default_branch;
   const webroot_branches = app_config.webroot_branches;
   const hostname = req.hostname
 
@@ -35,34 +34,19 @@ app.get("/app/:app_name", loadConf, (req, res) => {
       msg: "应用未配置webroot_branches,请检查配置 apps.json",
       app_name,
       branch_key,
-      default_branch: "",
       branch: "",
       branches: ""
     });
     return;
   }
 
-  if (!default_branch) {
-    res.render("index", {
-      code: errors.BRANCH_KEY_NO_CONFIGURED,
-      msg: "应用未配置default_branch,请检查配置 apps.json",
-      app_name,
-      branch_key,
-      default_branch: "",
-      branch: "",
-      branches: ""
-    });
-    return;
-  }
-
-  const branch = req.cookies[branch_key] || default_branch;
+  const branch = req.cookies[branch_key];
 
   if (!fse.existsSync(webroot_branches)) {
     res.render("index", {
       code: errors.BRANCHES_DIR_NOT_FOUND,
       msg: `分支根目录不存在 ${webroot_branches}`,
       app_name,
-      default_branch,
       branches: "",
       branch_key,
       branch
@@ -78,7 +62,6 @@ app.get("/app/:app_name", loadConf, (req, res) => {
       msg: `应用目录不存在 ${webroot_folder}，请检查应用目录是否正确`,
       app_name,
       branches: "",
-      default_branch,
       webroot: webroot_folder,
       branch_key,
       branch
@@ -107,7 +90,6 @@ app.get("/app/:app_name", loadConf, (req, res) => {
     code: 200,
     msg: `应用目录有效 ${webroot_folder}`,
     webroot: webroot_folder,
-    default_branch,
     app_name,
     branches,
     branch,
