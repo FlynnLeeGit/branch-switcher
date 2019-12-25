@@ -22,11 +22,8 @@ app.get("/app/:app_name", loadConf, (req, res) => {
   const app_config = req.app.get("app_config");
 
   const webroot_branches = app_config.webroot_branches;
-  const hostname = req.hostname
 
-  console.log(hostname)
-
-  const branch_key = hostname + ".branch";
+  const branch_key = req.host + ".branch";
 
   if (!webroot_branches) {
     res.render("index", {
