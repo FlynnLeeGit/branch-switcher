@@ -53,27 +53,50 @@
             </div>
           </div>
         </section>
+    
         <div class="section container" v-if="is_show_form">
-          <div class="field">
-            <label class="label">切换分支：</label>
-            <div class="control">
-              <div class="select">
-                <select placeholder="请选择分支" v-model="branch">
-                  <option value="">[默认分支]</option>
-                  <option v-for="b in branches" :key="b.name" :value="b.name">
-                  {{ b.name }} -- {{b.stats.mtime | dateFilter }} 更新</option>
-                </select>
+          <div class='columns'>
+            <!-- 前端分支 -->
+            <div class='column'>
+              <div class="field">
+                <label class="label">切换前端分支：</label>
+                <div class="control">
+                  <div class="select">
+                    <select @change='onChangeBranch' placeholder="请选择分支" v-model="branch">
+                      <option value="">[默认分支]</option>
+                      <option v-for="b in branches" :key="b.name" :value="b.name">
+                      {{ b.name }} -- {{b.stats.mtime | dateFilter }} 更新</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="field is-grouped">
+                <div class="control">
+                  <button v-if='branch' @click="onDelete" class="button is-danger is-small">删除</button>
+                </div>
+              </div>
+            </div>
+
+             <!-- 后端api分支  -->
+             <div class='column'>
+              <div class="field">
+                <label class="label">切换后端api环境：</label>
+                <div class="control">
+                  <div class="select">
+                    <select @change='onChangeApiBranch' placeholder="请选择分支" v-model="apiBranch">
+                      <option value="">默认环境</option>
+                      <option v-for="b in apiBranches" :key="b.name" :value="b.name">
+                      {{ b.name }}</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="field is-grouped">
-            <div class="control">
-              <button @click="onSubmit" class="button is-primary">
-                确认切换
-              </button>
-              <button style='margin-left:16px' v-if='branch' @click="onDelete" class="button is-danger">删除</button>
-            </div>
-          </div>
+        </div>
+
+        <div class="section container">
+          <button @click='onSubmit' class="button is-primary">确认</button>
         </div>
       </main>
     </div>
@@ -82,12 +105,14 @@
     <script src="https://static-s.styd.cn/201810181618/js.cookie.min.js"></script>
     <script>
       var branch_key = '<%= branch_key %>'
+      var api_branch_key = '<%= api_branch_key %>'
       var code = <%= code %>
       var app_name = '<%= app_name %>'
       var msg = '<%= msg %>'
       var branch = '<%= branch %>'
       var is_ok = code === 200
       var branches = <%- JSON.stringify(branches)%>;
+      console.log(code)
       new Vue({
           el: '#app',
           filters:{
@@ -104,14 +129,30 @@
               is_ok: is_ok,
               branch: branch,
               branch_text: branch || '默认分支',
-              scope: location.origin
+              scope: location.origin,
+
+              apiBranch: '',
+              apiBranches:[
+                {
+                  name:'test_a'
+                },
+                {
+                  name:'test_b'
+                },
+                {
+                  name:'test_c'
+                },
+                {
+                  name:'test_d'
+                },
+              ]
           },
           computed: {
               is_show_branch() {
                   return code !== 40001
               },
               is_show_form() {
-                  return code === 200
+                  return code === 200 || code === 40002
               },
               cookieDomain(){
                 const currentHostname = location.hostname
@@ -145,8 +186,11 @@
                   })
                 }
               },
-              onSubmit() {
-                  if(!this.branch){
+              toApp(){
+                location.href = this.scope
+              },
+              onChangeBranch(){
+                if(!this.branch){
                       Cookies.remove(branch_key,{
                         domain:this.cookieDomain
                       })
@@ -155,7 +199,20 @@
                         domain: this.cookieDomain
                       })
                   }
-                  location.href = this.scope
+              },
+              onChangeApiBranch(){
+                if(!this.apiBranch){
+                  Cookies.remove(api_branch_key,{
+                    domain:this.cookieDomain
+                  })
+                } else {
+                  Cookies.set(api_branch_key,this.apiBranch,{
+                    domain:this.cookieDomain
+                  })
+                }
+              },
+              onSubmit() {
+                  this.toApp()
               }
           }
       })

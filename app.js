@@ -26,6 +26,7 @@ app.get("/app/:app_name", loadConf, (req, res) => {
 
   const host = req.headers["x-forwarded-host"] || req.hostname;
   const branch_key = host + ".branch"
+  const api_branch_key = host + '.api'
 
   if (!webroot_branches) {
     res.render("index", {
@@ -34,7 +35,8 @@ app.get("/app/:app_name", loadConf, (req, res) => {
       app_name,
       branch_key,
       branch: "",
-      branches: ""
+      branches: "",
+      api_branch_key: ''
     });
     return;
   }
@@ -48,42 +50,46 @@ app.get("/app/:app_name", loadConf, (req, res) => {
       app_name,
       branches: "",
       branch_key,
-      branch
+      branch,
+      api_branch_key:''
     });
     return;
   }
 
   const webroot_folder = `${webroot_branches}/${branch}`;
 
+  const branches = fse
+  .readdirSync(webroot_branches)
+  .map(name => {
+    return {
+      name,
+      path: path.join(webroot_branches, name)
+    };
+  })
+  .filter(b => {
+    return fse.existsSync(b.path);
+  })
+  .map(b => {
+    b.stats = fse.statSync(b.path);
+    return b;
+  })
+  .sort((b1, b2) => b2.stats.mtimeMs - b1.stats.mtimeMs);
+
   if (branch && !fse.existsSync(webroot_folder)) {
     res.render("index", {
       code: errors.WEBROOT_DIR_NOT_FOUND,
-      msg: `应用目录不存在 ${webroot_folder}，请检查应用目录是否正确`,
+      msg: `分支目录不存在 ${webroot_folder}，请检查应用目录是否正确`,
       app_name,
-      branches: "",
+      branches,
       webroot: webroot_folder,
       branch_key,
-      branch
+      branch,
+      api_branch_key
     });
     return;
   }
 
-  const branches = fse
-    .readdirSync(webroot_branches)
-    .map(name => {
-      return {
-        name,
-        path: path.join(webroot_branches, name)
-      };
-    })
-    .filter(b => {
-      return fse.existsSync(b.path);
-    })
-    .map(b => {
-      b.stats = fse.statSync(b.path);
-      return b;
-    })
-    .sort((b1, b2) => b2.stats.mtimeMs - b1.stats.mtimeMs);
+ 
 
   res.render("index", {
     code: 200,
@@ -92,7 +98,8 @@ app.get("/app/:app_name", loadConf, (req, res) => {
     app_name,
     branches,
     branch,
-    branch_key
+    branch_key,
+    api_branch_key
   });
   return
 });
