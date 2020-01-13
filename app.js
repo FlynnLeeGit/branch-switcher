@@ -20,13 +20,13 @@ app
 app.get("/app/:app_name", loadConf, (req, res) => {
   const app_name = req.app.get("app_name");
   const app_config = req.app.get("app_config");
-  const default_branch = req.query.default_branch || 'master'
+  const default_branch = req.query.default_branch || "master";
 
   const webroot_branches = app_config.webroot_branches;
 
   const host = req.headers["x-forwarded-host"] || req.hostname;
-  const branch_key = host + ".branch"
-  const api_branch_key = host + '.api'
+  const branch_key = host + ".branch";
+  const api_branch_key = host + ".api";
 
   if (!webroot_branches) {
     res.render("index", {
@@ -36,12 +36,14 @@ app.get("/app/:app_name", loadConf, (req, res) => {
       branch_key,
       branch: "",
       branches: "",
-      api_branch_key: ''
+      api_branch: "",
+      api_branch_key: ""
     });
     return;
   }
 
-  const branch = req.cookies[branch_key] || default_branch
+  const branch = req.cookies[branch_key] || default_branch;
+  const api_branch = req.cookies[api_branch_key] || "";
 
   if (!fse.existsSync(webroot_branches)) {
     res.render("index", {
@@ -51,7 +53,8 @@ app.get("/app/:app_name", loadConf, (req, res) => {
       branches: "",
       branch_key,
       branch,
-      api_branch_key:''
+      api_branch,
+      api_branch_key: ""
     });
     return;
   }
@@ -59,21 +62,21 @@ app.get("/app/:app_name", loadConf, (req, res) => {
   const webroot_folder = `${webroot_branches}/${branch}`;
 
   const branches = fse
-  .readdirSync(webroot_branches)
-  .map(name => {
-    return {
-      name,
-      path: path.join(webroot_branches, name)
-    };
-  })
-  .filter(b => {
-    return fse.existsSync(b.path);
-  })
-  .map(b => {
-    b.stats = fse.statSync(b.path);
-    return b;
-  })
-  .sort((b1, b2) => b2.stats.mtimeMs - b1.stats.mtimeMs);
+    .readdirSync(webroot_branches)
+    .map(name => {
+      return {
+        name,
+        path: path.join(webroot_branches, name)
+      };
+    })
+    .filter(b => {
+      return fse.existsSync(b.path);
+    })
+    .map(b => {
+      b.stats = fse.statSync(b.path);
+      return b;
+    })
+    .sort((b1, b2) => b2.stats.mtimeMs - b1.stats.mtimeMs);
 
   if (branch && !fse.existsSync(webroot_folder)) {
     res.render("index", {
@@ -84,12 +87,11 @@ app.get("/app/:app_name", loadConf, (req, res) => {
       webroot: webroot_folder,
       branch_key,
       branch,
+      api_branch,
       api_branch_key
     });
     return;
   }
-
- 
 
   res.render("index", {
     code: 200,
@@ -99,9 +101,10 @@ app.get("/app/:app_name", loadConf, (req, res) => {
     branches,
     branch,
     branch_key,
+    api_branch,
     api_branch_key
   });
-  return
+  return;
 });
 
 app.post("/app/:app_name/gitlab", loadConf, (req, res) => {
