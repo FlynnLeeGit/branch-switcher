@@ -1,4 +1,4 @@
-FROM hub.styd.cn/node:sr-8.12.0
+FROM flynnlee/node:8.12.0
 
 WORKDIR /app
 COPY . /app
