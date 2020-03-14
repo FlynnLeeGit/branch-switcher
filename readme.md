@@ -1,8 +1,11 @@
 # branch-switcher Docker 镜像
+前端资源分支切换器,适用于同环境不同版本浏览器资源代码的切换
 
-## 开发
-**现阶段需要配合nginx进行调试**
-nginx 配置参考 nginx.conf
+
+* 
+
+![demo](./demo.png)
+
 
 ```shell
 npm run dev
@@ -16,8 +19,10 @@ npm run dev
 
 分支切换工具 docker 镜像
 
-```
-docker run -p 3030:3030 -v apps.json:/data/conf/apps.json hub.styd.cn/branch-switcher
+```shell
+# app.json为配置
+# /data 为需要检索目录结构的文件夹
+docker run -p 3030:3030 -v apps.json:/data/conf/apps.json -v /data:/data flynnlee/branch-switcher
 ```
 
 apps.json 为配置文件
@@ -26,12 +31,13 @@ apps.json 为配置文件
 {
   "demo": {
     // 项目名称 通过 http://localhost:3030/app/demo 访问
-    "webroot_branches": "/data/htdocs/oa_frontend_branches" // 多分支用的根目录
+    "webroot_branches": "/data/htdocs/oa_frontend_branches" // 多分支用的根目录 这里的/data 需要 volume
   }
 }
 ```
 
 ### 使用
 
-- nginx 配置 参考./nginx.conf
+- nginx 配置 参考[./nginx.conf](./nginx.conf)
+
 - 和 gitlab 分支删除对应 `/app/:app_name/gitlab`

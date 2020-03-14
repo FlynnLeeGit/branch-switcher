@@ -1,4 +1,4 @@
 build-image:
-	docker build . -t hub.styd.cn/branch-switcher
-push-image:
-	docker push hub.styd.cn/branch-switcher
+	docker build . -t flynnlee/branch-switcher
+publish: build-image
+	docker push flynnlee/branch-switcher
