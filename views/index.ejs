@@ -138,6 +138,7 @@
               referer,
 
               apiBranch: api_branch,
+              from: '',
               apiBranches:[
                 {
                   name:'a'
@@ -171,15 +172,6 @@
                   // 只使用一级域名domain
                   return '.' + currentHostname.split('.').slice(-2).join('.')
                 }
-              },
-              from(){
-                // 没有来源 跳转
-                const branchFrom = Cookies.get('_branch_from')
-                if(branchFrom) {
-                  return branchFrom
-                }else {
-                  return location.origin
-                }
               }
           },
           mounted(){
@@ -195,7 +187,9 @@
             if(this.referer && new URL(this.referer).pathname!==location.pathname){
               console.log('set Cookie _branch_from ->',this.referer)
               Cookies.set('_branch_from',this.referer)
+              
             }
+            this.from = Cookies.get('_branch_from') || location.origin
 
           },
           methods: {
@@ -224,8 +218,7 @@
                 }
               },
               toApp(){
-                const from = this.from
-                location.href = from
+                location.href = this.from
               },
               onChangeBranch(){
                 if(!this.branch){
