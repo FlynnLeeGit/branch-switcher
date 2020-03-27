@@ -1,11 +1,13 @@
 # branch-switcher Docker 镜像
 前端资源分支切换器,适用于同环境不同版本浏览器资源代码的切换
-
-
-* 
+已经带了docker hub持续集成 直接push即可
 
 ![demo](./demo.png)
 
+
+* 支持直接referer回跳
+* 添加返回按钮
+* 支持api环境cookie设定
 
 ```shell
 npm run dev
