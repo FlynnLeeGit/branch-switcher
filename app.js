@@ -37,7 +37,8 @@ app.get("/app/:app_name", loadConf, (req, res) => {
       branch: "",
       branches: "",
       api_branch: "",
-      api_branch_key: ""
+      api_branch_key: "",
+      referer: req.headers.referer
     });
     return;
   }
@@ -54,7 +55,8 @@ app.get("/app/:app_name", loadConf, (req, res) => {
       branch_key,
       branch,
       api_branch,
-      api_branch_key: ""
+      api_branch_key: "",
+      referer: req.headers.referer
     });
     return;
   }
@@ -88,7 +90,8 @@ app.get("/app/:app_name", loadConf, (req, res) => {
       branch_key,
       branch,
       api_branch,
-      api_branch_key
+      api_branch_key,
+      referer: req.headers.referer
     });
     return;
   }
@@ -102,7 +105,8 @@ app.get("/app/:app_name", loadConf, (req, res) => {
     branch,
     branch_key,
     api_branch,
-    api_branch_key
+    api_branch_key,
+    referer: req.headers.referer
   });
   return;
 });

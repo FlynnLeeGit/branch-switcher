@@ -27,6 +27,9 @@
             <a class="navbar-item">
               <h1>Branch Switcher</h1>
             </a>
+            <a class="navbar-item">
+              <button @click='goBack' class='button is-small'>返回</button>
+            </a>
           </div>
         </div>
       </nav>
@@ -48,7 +51,7 @@
                 {{ msg }}
               </div>
               <div v-if="is_ok" class="subtitle">
-                项目站点： <a :href="scope">{{ scope }}</a>
+                项目来源： <a :href="from">{{ from }}</a>
               </div>
             </div>
           </div>
@@ -113,8 +116,9 @@
       var branch = '<%= branch %>'
       var is_ok = code === 200
       var branches = <%- JSON.stringify(branches)%>;
-      console.log(code)
-      new Vue({
+      var referer = '<%= referer %>'
+
+      const app = new Vue({
           el: '#app',
           filters:{
             dateFilter(key){
@@ -123,6 +127,7 @@
             }
           },
           data: {
+             branch_key,
               branches: branches,
               app_name: app_name,
               code: code,
@@ -130,7 +135,7 @@
               is_ok: is_ok,
               branch: branch,
               branch_text: branch || '默认分支',
-              scope: location.origin,
+              referer,
 
               apiBranch: api_branch,
               apiBranches:[
@@ -166,9 +171,37 @@
                   // 只使用一级域名domain
                   return '.' + currentHostname.split('.').slice(-2).join('.')
                 }
+              },
+              from(){
+                // 没有来源 跳转
+                const branchFrom = Cookies.get('_branch_from')
+                if(branchFrom) {
+                  return branchFrom
+                }else {
+                  return location.origin
+                }
               }
           },
+          mounted(){
+            const clone = s=> JSON.parse(JSON.stringify(s))
+            console.log('cookie _branch_from ->', Cookies.get('_branch_from'))
+            console.log('referer -> ',clone(this.referer))
+            console.log('branch_key->',clone(this.branch_key))
+            console.log('branch -> ',clone(this.branch))
+            console.log('branches -> ',clone(this.branches))
+            console.log('apiBranches -> ',clone(this.apiBranches))
+            console.log('apiBranch -> ',clone(this.apiBranch))
+
+            if(this.referer && new URL(this.referer).pathname!==location.pathname){
+              console.log('set Cookie _branch_from ->',this.referer)
+              Cookies.set('_branch_from',this.referer)
+            }
+
+          },
           methods: {
+              goBack(){
+                history.go(-1)
+              },
               onDelete(){
                 if(window.confirm(`是否确认删除分支目录${this.branch}?`)){
                   window.fetch(location.pathname+'/delete',{
@@ -191,7 +224,8 @@
                 }
               },
               toApp(){
-                location.href = this.scope
+                const from = this.from
+                location.href = from
               },
               onChangeBranch(){
                 if(!this.branch){
