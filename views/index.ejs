@@ -51,7 +51,7 @@
                 {{ msg }}
               </div>
               <div v-if="is_ok" class="subtitle">
-                项目来源： <a :href="from">{{ from }}</a>
+                项目站点： <a :href="site">{{ site }}</a>
               </div>
             </div>
           </div>
@@ -138,7 +138,7 @@
               referer,
 
               apiBranch: api_branch,
-              from: '',
+              site: location.origin,
               apiBranches:[
                 {
                   name:'a'
@@ -176,21 +176,12 @@
           },
           mounted(){
             const clone = s=> JSON.parse(JSON.stringify(s))
-            console.log('cookie _branch_from ->', Cookies.get('_branch_from'))
             console.log('referer -> ',clone(this.referer))
             console.log('branch_key->',clone(this.branch_key))
             console.log('branch -> ',clone(this.branch))
             console.log('branches -> ',clone(this.branches))
             console.log('apiBranches -> ',clone(this.apiBranches))
             console.log('apiBranch -> ',clone(this.apiBranch))
-
-            if(this.referer && new URL(this.referer).pathname!==location.pathname){
-              console.log('set Cookie _branch_from ->',this.referer)
-              Cookies.set('_branch_from',this.referer)
-              
-            }
-            this.from = Cookies.get('_branch_from') || location.origin
-
           },
           methods: {
               goBack(){
@@ -217,9 +208,6 @@
                   })
                 }
               },
-              toApp(){
-                location.href = this.from
-              },
               onChangeBranch(){
                 if(!this.branch){
                       Cookies.remove(branch_key,{
@@ -243,7 +231,7 @@
                 }
               },
               onSubmit() {
-                  this.toApp()
+                history.go(-1)
               }
           }
       })
